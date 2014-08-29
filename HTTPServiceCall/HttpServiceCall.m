@@ -54,6 +54,7 @@ static HttpServiceCall *sharedInstance = nil;
         downloadQueue=[[NSOperationQueue alloc] init];
         
         //@Manish ---- will be useful for Internet-Connection Checking
+	  //You might need to import the framework.If Error
         __block HttpServiceCall * __weak weakSelf=self;
         [self setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
             [weakSelf internetConnectionChanged:status];
@@ -65,11 +66,11 @@ static HttpServiceCall *sharedInstance = nil;
 #pragma mark - InterNet Connection Handler
 -(void)internetConnectionChanged:(AFNetworkReachabilityStatus)status{
     if (status==AFNetworkReachabilityStatusNotReachable) {
-        DebugLog(@"InterNet NotReachable.");
+        //DebugLog(@"InterNet NotReachable.");
     }else if (status==AFNetworkReachabilityStatusReachableViaWiFi) {
-        DebugLog(@"InterNet Wifi is Avaliable.");
+        //DebugLog(@"InterNet Wifi is Avaliable.");
     }else if (status==AFNetworkReachabilityStatusReachableViaWWAN) {
-        DebugLog(@"InterNet 3G is Avaliable.");
+        //DebugLog(@"InterNet 3G is Avaliable.");
     }
 }
 
@@ -100,10 +101,10 @@ static HttpServiceCall *sharedInstance = nil;
     AFJSONRequestOperation* operation = [[AFJSONRequestOperation alloc] initWithRequest: apiRequest];    
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //  DebugLog(@"RESPONSE = %@",responseObject);
+        //  //DebugLog(@"RESPONSE = %@",responseObject);
         completionBlock(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        DebugLog(@"RESPONSE Error= %@",error);
+        //DebugLog(@"RESPONSE Error= %@",error);
         completionBlock(nil);
     }];
     
@@ -113,7 +114,7 @@ static HttpServiceCall *sharedInstance = nil;
 #pragma mark -Cancel All HTTP-Operations
 -(void)cancelAllHttpOperations{
     for (NSOperation *operation in [self.queue operations]) {
-        DebugLog(@"Options is in AFNetworking :%@",operation);
+        //DebugLog(@"Options is in AFNetworking :%@",operation);
         if ([operation isKindOfClass:[AFHTTPRequestOperation class]]) {
             [operation cancel];
         }
@@ -132,10 +133,10 @@ static HttpServiceCall *sharedInstance = nil;
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     AFDownloadRequestOperation *operation = [[AFDownloadRequestOperation alloc] initWithRequest:request targetPath:path shouldResume:YES];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //  DebugLog(@"Successfully downloaded file to %@", path);
+        //  //DebugLog(@"Successfully downloaded file to %@", path);
         completionBlock(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         DebugLog(@"Error: %@", error);
+         //DebugLog(@"Error: %@", error);
         completionBlock(nil);
     }];
     
@@ -146,7 +147,7 @@ static HttpServiceCall *sharedInstance = nil;
             NSNumber *total = [NSNumber numberWithLongLong:totalBytesExpectedToReadForFile];
             float percentage=([received floatValue]/[total floatValue]);
             
-//            DebugLog(@"%@",[NSString stringWithFormat:@"File-Downloading= %.2f%%",percentage*100]);
+//            //DebugLog(@"%@",[NSString stringWithFormat:@"File-Downloading= %.2f%%",percentage*100]);
             if (delegate && [delegate respondsToSelector:@selector(updateDownloadProgress:ofURL:)]) {
                 [delegate updateDownloadProgress:percentage ofURL:op.request.URL];
             }
@@ -159,7 +160,7 @@ static HttpServiceCall *sharedInstance = nil;
 #pragma mark - DOWNLOAD Helper Functions
 -(BOOL)checkUrl_into_downloadQueue:(NSURL *)url{
     for (NSOperation *operation in [self.downloadQueue operations]) {
-        DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
+        //DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
         if ([operation isKindOfClass:[AFDownloadRequestOperation class]]) {
             if ([[(AFDownloadRequestOperation *)operation getOperationUrl].absoluteString isEqualToString:url.absoluteString]) {
                 return YES;
@@ -173,7 +174,7 @@ static HttpServiceCall *sharedInstance = nil;
 
 -(void)pauseAllDownloadOperations{
     for (NSOperation *operation in [self.downloadQueue operations]) {
-        DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
+        //DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
         if ([operation isKindOfClass:[AFDownloadRequestOperation class]]) {
             [(AFDownloadRequestOperation *)operation pause];
         }
@@ -181,7 +182,7 @@ static HttpServiceCall *sharedInstance = nil;
 }
 -(void)resumeAllDownloadOperations{
     for (NSOperation *operation in [self.downloadQueue operations]) {
-        DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
+        //DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
         if ([operation isKindOfClass:[AFDownloadRequestOperation class]]) {
             [(AFDownloadRequestOperation *)operation resume];
         }
@@ -189,7 +190,7 @@ static HttpServiceCall *sharedInstance = nil;
 }
 -(void)cancelAllDownloadOperations{
     for (NSOperation *operation in [self.downloadQueue operations]) {
-        DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
+        //DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
         if ([operation isKindOfClass:[AFDownloadRequestOperation class]]) {
             [self deleteAFTempFile:[(AFDownloadRequestOperation *)operation tempPath]];
             [(AFDownloadRequestOperation *)operation cancel];
@@ -198,7 +199,7 @@ static HttpServiceCall *sharedInstance = nil;
 }
 -(void)resumeDownloadOperationWithURL:(NSURL *)url{
     for (NSOperation *operation in [self.downloadQueue operations]) {
-        DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
+        //DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
         if ([operation isKindOfClass:[AFDownloadRequestOperation class]]) {
             if ([[(AFDownloadRequestOperation *)operation getOperationUrl].absoluteString isEqualToString:url.absoluteString]) {
                 [(AFDownloadRequestOperation *)operation resume];
@@ -208,7 +209,7 @@ static HttpServiceCall *sharedInstance = nil;
 }
 -(void)pauseDownloadOperationWithURL:(NSURL *)url{
     for (NSOperation *operation in [self.downloadQueue operations]) {
-        DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
+        //DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
         if ([operation isKindOfClass:[AFDownloadRequestOperation class]]) {
             if ([[(AFDownloadRequestOperation *)operation getOperationUrl].absoluteString isEqualToString:url.absoluteString]) {
                 [(AFDownloadRequestOperation *)operation pause];
@@ -218,7 +219,7 @@ static HttpServiceCall *sharedInstance = nil;
 }
 -(void)cancelDownloadOperationWithURL:(NSURL *)url{
     for (NSOperation *operation in [self.downloadQueue operations]) {
-        DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
+        //DebugLog(@"Operation is in AFDownloadRequestOperation :%@",operation);
         if ([operation isKindOfClass:[AFDownloadRequestOperation class]]) {
             if ([[(AFDownloadRequestOperation *)operation getOperationUrl].absoluteString isEqualToString:url.absoluteString]) {
                 [self deleteAFTempFile:[(AFDownloadRequestOperation *)operation tempPath]];
@@ -232,9 +233,9 @@ static HttpServiceCall *sharedInstance = nil;
     //Delete Zip-File
     NSError *error=nil;
     if ([[NSFileManager defaultManager] removeItemAtPath:tempPath error:&error]) {
-        DebugLog(@"\n\n\n\nRemove AF-TEMP File at-path=%@\n\n\n\n",tempPath);
+        //DebugLog(@"\n\n\n\nRemove AF-TEMP File at-path=%@\n\n\n\n",tempPath);
     }else{
-        DebugLog(@"Error to remove AF-TEMP file=%@ \n error=%@",tempPath,error);
+        //DebugLog(@"Error to remove AF-TEMP file=%@ \n error=%@",tempPath,error);
         return NO;
     }
     return YES;
@@ -249,9 +250,9 @@ static HttpServiceCall *sharedInstance = nil;
         NSString *filePath = [[AFDownloadRequestOperation cacheFolder] stringByAppendingPathComponent:file];
         BOOL fileDeleted = [fileManager removeItemAtPath:filePath error:&error];
         if (fileDeleted != YES || error != nil){
-            DebugLog(@"File Not deleted for : %@", filePath);
+            //DebugLog(@"File Not deleted for : %@", filePath);
         }else{
-            DebugLog(@"File deleted for : %@", filePath);
+            //DebugLog(@"File deleted for : %@", filePath);
         }
     }
     return YES;
@@ -271,7 +272,7 @@ static HttpServiceCall *sharedInstance = nil;
         NSNumber *total = [NSNumber numberWithLongLong:totalBytesExpectedToRead];
         float percentage=([received floatValue]/[total floatValue])*100;
         
-        DebugLog(@"Image= %@ & download%%= %.0f",[[op.request.URL path] lastPathComponent],percentage);
+        //DebugLog(@"Image= %@ & download%%= %.0f",[[op.request.URL path] lastPathComponent],percentage);
         
         if (delegate && [delegate respondsToSelector:@selector(updateDownloadProgress:ofURL:)]) {
             [delegate updateDownloadProgress:percentage ofURL:op.request.URL];
